@@ -9,10 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
-
 /**
- *
  * This is just a demo for you, please run it on JDK17 (some statements may be not allowed in lower version).
  * This is just a demo, and you can extend and implement functions
  * based on this demo, or implement it in a different way.
@@ -53,28 +50,28 @@ public class OnlineCoursesAnalyzer {
 
     //1
     public Map<String, Integer> getPtcpCountByInst() {
-        Map<String,Integer> ans = courses.stream().
-                collect(Collectors.groupingBy(Course::getInstitution,Collectors.summingInt(Course::getParticipants)));
+        Map<String, Integer> ans = courses.stream().
+                collect(Collectors.groupingBy(Course::getInstitution, Collectors.summingInt(Course::getParticipants)));
         return ans;
     }
 
     //2
     public Map<String, Integer> getPtcpCountByInstAndSubject() {
-        Map<String,Integer> ans = courses.stream().
-                collect(Collectors.groupingBy(Course::getInstAndSubject,Collectors.summingInt(Course::getParticipants)));
+        Map<String, Integer> ans = courses.stream().
+                collect(Collectors.groupingBy(Course::getInstAndSubject, Collectors.summingInt(Course::getParticipants)));
         ans = ans.entrySet().stream().sorted((p1, p2) -> p2.getValue().compareTo(p1.getValue())).
-                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)->e1, LinkedHashMap::new));
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         return ans;
     }
 
     //3
     public Map<String, List<List<String>>> getCourseListOfInstructor() {
-        Map<String,List<List<String>>> ans = new HashMap<>();
+        Map<String, List<List<String>>> ans = new HashMap<>();
         // where the key is the name of the instructor (without quotation marks)
         // while the value is a list containing 2-course lists
         for (Course course : courses) {
             String[] instructorList = course.instructors.split(", ");
-            String inst=instructorList[0];
+            String inst = instructorList[0];
             if (instructorList.length == 1) {
                 // independent
                 if (!ans.containsKey(inst)) {
@@ -85,7 +82,7 @@ public class OnlineCoursesAnalyzer {
                     List<List<String>> list = new ArrayList<>();
                     list.add(list1);
                     list.add(list2);
-                    ans.put(inst,list);
+                    ans.put(inst, list);
                 } else {
                     if (!ans.get(inst).get(0).contains(course.title)) {
                         ans.get(inst).get(0).add(course.title);
@@ -104,7 +101,7 @@ public class OnlineCoursesAnalyzer {
                         List<List<String>> list = new ArrayList<>();
                         list.add(list1);
                         list.add(list2);
-                        ans.put(inst,list);
+                        ans.put(inst, list);
                     } else {
                         if (!ans.get(inst).get(1).contains(course.title)) {
                             ans.get(inst).get(1).add(course.title);
@@ -121,7 +118,7 @@ public class OnlineCoursesAnalyzer {
     public List<String> getCourses(int topK, String by) {
         // returns the top K courses (parameter topK)
         // by the given criterion (parameter by).
-        Map<String,Double> cnt = new HashMap<>();
+        Map<String, Double> cnt = new HashMap<>();
         List<String> ans = new ArrayList<>();
         // return the title
         switch (by) {
@@ -142,15 +139,15 @@ public class OnlineCoursesAnalyzer {
                 for (Course cur : courses) {
                     if (cnt.containsKey(cur.title)) {
                         if (cur.getParticipants() > cnt.get(cur.title)) {
-                            cnt.replace(cur.title, (double)cur.getParticipants());
+                            cnt.replace(cur.title, (double) cur.getParticipants());
                         }
                     } else {
-                        cnt.put(cur.title, (double)cur.getParticipants());
+                        cnt.put(cur.title, (double) cur.getParticipants());
                     }
                 }
         }
-        cnt = cnt.entrySet().stream().sorted((e1,e2) -> e2.getValue().compareTo(e1.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1,e2) -> e1, LinkedHashMap::new));
+        cnt = cnt.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         String[] tmpAns = cnt.keySet().toArray(new String[cnt.size()]);
         for (int i = 0; i < topK; i++) {
             ans.add(tmpAns[i]);
@@ -177,26 +174,26 @@ public class OnlineCoursesAnalyzer {
     public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
         // gender: 0-female, 1-male
         // isBachelorOrHigher: 0-Not get bachelor degree, 1- Bachelor degree or higher
-        Map<String,Double> avgAge = courses.stream().
-                collect(Collectors.groupingBy(Course::getNumber,Collectors.averagingDouble(Course::getMedianAge)));
-        Map<String,Double> avgGender = courses.stream().
-                collect(Collectors.groupingBy(Course::getNumber,Collectors.averagingDouble(Course::getPercentMale)));
-        Map<String,Double> avgDegree = courses.stream().
-                collect(Collectors.groupingBy(Course::getNumber,Collectors.averagingDouble(Course::getPercentDegree)));
-        Map<String,Double> tmp = new HashMap<>();
+        Map<String, Double> avgAge = courses.stream().
+                collect(Collectors.groupingBy(Course::getNumber, Collectors.averagingDouble(Course::getMedianAge)));
+        Map<String, Double> avgGender = courses.stream().
+                collect(Collectors.groupingBy(Course::getNumber, Collectors.averagingDouble(Course::getPercentMale)));
+        Map<String, Double> avgDegree = courses.stream().
+                collect(Collectors.groupingBy(Course::getNumber, Collectors.averagingDouble(Course::getPercentDegree)));
+        Map<String, Double> tmp = new HashMap<>();
         // tmp: course_number-avg
         for (String cur :
                 avgAge.keySet()) {
             double sim = (age - avgAge.get(cur)) * (age - avgAge.get(cur)) +
-                    (gender*100 - avgGender.get(cur)) * (gender*100 - avgGender.get(cur)) +
-                    (isBachelorOrHigher*100 - avgDegree.get(cur)) * (isBachelorOrHigher*100 - avgDegree.get(cur));
+                    (gender * 100 - avgGender.get(cur)) * (gender * 100 - avgGender.get(cur)) +
+                    (isBachelorOrHigher * 100 - avgDegree.get(cur)) * (isBachelorOrHigher * 100 - avgDegree.get(cur));
 //            if (!tmp.containsKey(cur)) {
-                tmp.put(cur,sim);
-                // the if clause is duplicate
+            tmp.put(cur, sim);
+            // the if clause is duplicate
 //            }
         }
         tmp = tmp.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getValue)).
-                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1,e2) -> e1, LinkedHashMap::new));
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         // sort number-avg
         Map<String, String> title = new HashMap<>();
         // title: number-title
@@ -217,7 +214,7 @@ public class OnlineCoursesAnalyzer {
             }
         }
         // REQUIRE: the same course title can only occur once in the list
-        Map<String,Double> titleAvg = new HashMap<>();
+        Map<String, Double> titleAvg = new HashMap<>();
         // title-avg
         // as one title can only occur once in the list, let the largest avg occur
         for (String cur : tmp.keySet()) {
@@ -234,7 +231,7 @@ public class OnlineCoursesAnalyzer {
         //  REQUIRE: If two courses have the same similarity values,
         //  then they should be sorted by alphabetical order of their titles.
         titleAvg = titleAvg.entrySet().stream().sorted((p1, p2) -> p1.getValue().compareTo(p2.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1,e2) -> e1, LinkedHashMap::new));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         List<String> ans = new ArrayList<>();
         String[] tmpAns = titleAvg.keySet().toArray(new String[titleAvg.size()]);
         for (int i = 0; i < 10; i++) {
@@ -313,6 +310,7 @@ class Course {
     public String getInstAndSubject() {
         return institution + "-" + subject;
     }
+
     public String getInstitution() {
         return institution;
     }
