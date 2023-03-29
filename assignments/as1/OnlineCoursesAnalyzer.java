@@ -49,18 +49,38 @@ public class OnlineCoursesAnalyzer {
     }
 
     //1
+
+    /**
+     * This method returns a <institution, count> map,
+     * where the key is the institution
+     * while the value is the total number of participants
+     * who have accessed the courses of the institution.
+     */
     public Map<String, Integer> getPtcpCountByInst() {
-        Map<String, Integer> ans = courses.stream().
-                collect(Collectors.groupingBy(Course::getInstitution, Collectors.summingInt(Course::getParticipants)));
+        Map<String, Integer> ans = courses.stream()
+                .collect(Collectors.groupingBy(
+                        Course::getInstitution, Collectors.summingInt(Course::getParticipants)));
         return ans;
     }
 
     //2
+
+    /**
+     * This method returns a <institution-course Subject, count> map, 
+     * where the key is the string concatenating the Institution 
+     * and the course Subject (without quotation marks) using '-' 
+     * while the value is the total number of participants 
+     * in a course Subject of an institution.
+     */
     public Map<String, Integer> getPtcpCountByInstAndSubject() {
-        Map<String, Integer> ans = courses.stream().
-                collect(Collectors.groupingBy(Course::getInstAndSubject, Collectors.summingInt(Course::getParticipants)));
-        ans = ans.entrySet().stream().sorted((p1, p2) -> p2.getValue().compareTo(p1.getValue())).
-                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        Map<String, Integer> ans = courses.stream()
+                .collect(Collectors.groupingBy
+                        (Course::getInstAndSubject,
+                                Collectors.summingInt(Course::getParticipants)));
+        ans = ans.entrySet().stream().sorted((p1, p2) -> p2.getValue().compareTo(p1.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1, LinkedHashMap::new));
         return ans;
     }
 
